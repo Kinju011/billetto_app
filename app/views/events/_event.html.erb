@@ -1,0 +1,27 @@
+<turbo-frame id="event_<%= event.id %>">
+  <h2><%= event.title %></h2>
+
+  <p>
+    <strong>Date:</strong>
+    <%= event.date.strftime("%d %b %Y, %I:%M %p") rescue event.date %>
+  </p>
+
+  <% if event.image_url.present? %>
+    <img src="<%= event.image_url %>" width="400" />
+  <% end %>
+
+  <p><%= event.description&.truncate(200) %></p>
+
+  <% stream = "event_#{event.id}" %>
+  <% events = Rails.configuration.event_store.read.stream(stream).to_a %>
+
+  <% upvotes = events.count { |e| e.is_a?(EventUpvoted) } %>
+  <% downvotes = events.count { |e| e.is_a?(EventDownvoted) } %>
+
+  <p>
+    👍 <%= upvotes %> | 👎 <%= downvotes %>
+  </p>
+
+  <%= button_to "👍 Upvote", votes_path(event_id: event.id, type: "up"), method: :post %>
+  <%= button_to "👎 Downvote", votes_path(event_id: event.id, type: "down"), method: :post %>
+</turbo-frame>
