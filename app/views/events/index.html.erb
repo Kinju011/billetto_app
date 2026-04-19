@@ -1,0 +1,22 @@
+<h1>Events</h1>
+
+<% @events.each do |event| %>
+  <div style="margin-bottom: 30px; border-bottom: 1px solid #ccc; padding-bottom: 15px;">
+    
+    <h2><%= event.title %></h2>
+    
+    <p>
+      <strong>Date:</strong>
+      <%= event.date.strftime("%d %b %Y, %I:%M %p") rescue event.date %>
+    </p>
+
+    <% if event.image_url.present? %>
+      <img src="<%= event.image_url %>" width="400" style="border-radius: 8px;" />
+    <% end %>
+
+    <p style="max-width: 600px;">
+      <%= event.description&.truncate(200) %>
+    </p>
+
+  </div>
+<% end %>
