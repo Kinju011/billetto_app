@@ -4,17 +4,28 @@ class EventIngestionService
   end
 
   def call
-    events = @api_service.fetch_events
+    response = @api_service.fetch_events
+    events = response["data"]
 
     events.each do |event_data|
-      Event.find_or_initialize_by(external_id: event_data["id"]).tap do |event|
-        event.title = event_data["title"]
-        event.description = event_data["description"]
-        event.date = event_data["start_time"]
-        event.image_url = event_data["image"]
+      mapped = map_event(event_data)
 
+      Event.find_or_initialize_by(external_id: mapped[:external_id]).tap do |event|
+        event.assign_attributes(mapped)
         event.save!
       end
     end
+  end
+
+  private
+
+  def map_event(data)
+    {
+      external_id: data["id"],
+      title: data["title"],
+      description: data["description"],
+      date: data["startdate"],
+      image_url: data["image_link"]
+    }
   end
 end
