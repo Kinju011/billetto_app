@@ -63,3 +63,7 @@ group :test do
 end
 
 gem "rspec-rails", "~> 8.0", :groups => [:development, :test]
+
+gem "httparty", "~> 0.24.2"
+
+gem "dotenv-rails", "~> 3.2"
