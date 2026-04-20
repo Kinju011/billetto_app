@@ -10,11 +10,22 @@ class BillettoApiService
   end
 
   def fetch_events
-    response = self.class.get("/api/v3/public/events?limit=100", headers: @headers)
+    begin
+      response = self.class.get("/api/v3/public/events?limit=100", headers: @headers)
 
-    raise "API Error: #{response.code}" unless response.success?
-
-    response.parsed_response
+      if response.success?
+        response.parsed_response
+      else
+        Rails.logger.error "Billetto API Error: #{response.code} - #{response.body}"
+        [] # Return empty to prevent crash
+      end
+    rescue HTTParty::Error, SocketError => e
+      Rails.logger.error "Billetto API Connection Failed: #{e.message}"
+      []
+    rescue StandardError => e
+      Rails.logger.error "Unexpected API Error: #{e.message}"
+      []
+    end
   end
 
   private

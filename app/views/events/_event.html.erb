@@ -22,6 +22,12 @@
     👍 <%= upvotes %> | 👎 <%= downvotes %>
   </p>
 
-  <%= button_to "👍 Upvote", votes_path(event_id: event.id, type: "up"), method: :post %>
-  <%= button_to "👎 Downvote", votes_path(event_id: event.id, type: "down"), method: :post %>
+  <% if user_signed_in? %>
+    <%= button_to "👍 Upvote", votes_path(event_id: event.id, type: "up"), method: :post %>
+    <%= button_to "👎 Downvote", votes_path(event_id: event.id, type: "down"), method: :post %>
+  <% else %>
+    <p style="color: #666; font-style: italic;">
+      Please <a href="#" onclick="window.Clerk.openSignIn(); return false;" style="color: #1a73e8; text-decoration: underline;">log in</a> to vote.
+    </p>
+  <% end %>
 </turbo-frame>

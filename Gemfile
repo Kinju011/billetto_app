@@ -62,10 +62,12 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "rspec-rails", "~> 8.0", :groups => [:development, :test]
+gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
 
 gem "httparty", "~> 0.24.2"
 
 gem "dotenv-rails", "~> 3.2"
 
 gem "rails_event_store", "~> 2.18"
+
+gem "clerk-sdk-ruby", require: "clerk"
