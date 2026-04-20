@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Votes", type: :request do
   let(:event) { Event.create!(title: "Test Event", date: Time.now, external_id: "ext_123") }
-  
+
   describe "POST /votes" do
     context "when user is not logged in" do
       it "redirects to the root path" do
@@ -23,11 +23,11 @@ RSpec.describe "Votes", type: :request do
 
       it "successfully publishes an EventUpvoted event to RES" do
         event_store = Rails.configuration.event_store
-        
+
         expect {
           post votes_path(event_id: event.id, type: "up")
-        }.to change { 
-          event_store.read.stream("event_#{event.id}").to_a.count 
+        }.to change {
+          event_store.read.stream("event_#{event.id}").to_a.count
         }.by(1)
 
         published_event = event_store.read.stream("event_#{event.id}").to_a.last
@@ -38,14 +38,14 @@ RSpec.describe "Votes", type: :request do
       it "prevents duplicate votes from the same user" do
         # First vote
         post votes_path(event_id: event.id, type: "up")
-        
+
         # Second vote
         expect {
           post votes_path(event_id: event.id, type: "up")
-        }.not_to change { 
-          Rails.configuration.event_store.read.stream("event_#{event.id}").to_a.count 
+        }.not_to change {
+          Rails.configuration.event_store.read.stream("event_#{event.id}").to_a.count
         }
-        
+
         expect(flash[:alert]).to eq("You have already voted on this event.")
       end
     end
