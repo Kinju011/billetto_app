@@ -5,7 +5,7 @@ This application fetches event data from the Billetto API and implements a votin
 ## 🚀 Setup Instructions
 
 ### 1. Prerequisites
-- Ruby 3.x
+- Ruby 3.2+ (Required for Rails 8)
 - PostgreSQL
 - Billetto API Key & Secret
 - Clerk Publishable Key & Secret Key
@@ -19,10 +19,16 @@ CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 ```
 
-### 3. Installation
+### 3. Installation & Data Ingestion
 ```bash
+# Install dependencies
 bundle install
+
+# Setup database
 rails db:create db:migrate
+
+# Fetch initial data from Billetto API
+rails billetto:ingest_events
 ```
 
 ### 4. Rails Event Store (RES) Configuration
