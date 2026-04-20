@@ -1,55 +1,215 @@
-# Billetto Rails Engineer Test - Implementation
+# Billetto Rails Assignment
 
-This application fetches event data from the Billetto API and implements a voting system using Rails Event Store (RES) and Clerk authentication.
+## 📌 Overview
 
-## 🚀 Setup Instructions
+This application integrates with the Billetto API to fetch public events, stores them locally, and provides a voting system using an event-driven architecture.
 
-### 1. Prerequisites
-- Ruby 3.2+ (Required for Rails 8)
-- PostgreSQL
-- Billetto API Key & Secret
-- Clerk Publishable Key & Secret Key
+The goal of this project is to demonstrate:
 
-### 2. Environment Variables
-Create a `.env` file in the root directory and add the following:
-```env
-BILLETTO_API_KEY=your_api_key
-BILLETTO_API_SECRET=your_api_secret
-CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
+* External API integration
+* Clean Rails architecture
+* Event-driven design using Rails Event Store
+* Basic authentication handling
+
+---
+
+## 🚀 Features
+
+* Fetch and ingest events from Billetto API
+* Store and display events with relevant details
+* Event-driven voting system (upvote/downvote)
+* Authentication using Clerk (hosted login)
+* Turbo-powered UI updates (no full page reload)
+
+---
+
+## 🏗️ Architecture Overview
+
+The application follows a modular and maintainable design:
+
+* **Service Objects**
+
+  * `BillettoApiService` → Handles external API communication
+  * `EventIngestionService` → Responsible for transforming and storing data
+
+* **Event-Driven Design**
+
+  * Voting is implemented using Rails Event Store
+  * Votes are stored as immutable events instead of direct DB updates
+
+* **Separation of Concerns**
+
+  * Controllers remain thin
+  * Business logic is handled in services
+  * Views are responsible only for presentation
+
+---
+
+## 🌐 API Integration
+
+Events are fetched from the Billetto Public Events API.
+
+* Data is ingested and stored locally
+* Duplicate entries are avoided using `external_id`
+* Only relevant fields are mapped and persisted
+
+---
+
+## 🗳️ Voting System (Event-Driven)
+
+Instead of storing votes directly in the database, the application uses Rails Event Store.
+
+Each vote is recorded as an event:
+
+* `EventUpvoted`
+* `EventDownvoted`
+
+### Why Event Store?
+
+* Maintains an immutable history of actions
+* Decouples write and read logic
+* Allows easy extension for analytics or projections
+
+Votes are grouped using streams:
+
+```
+event_<event_id>
 ```
 
-### 3. Installation & Data Ingestion
-```bash
-# Install dependencies
-bundle install
+Vote counts are dynamically calculated by reading events from the stream.
 
-# Setup database
-rails db:create db:migrate
+---
 
-# Fetch initial data from Billetto API
-rails billetto:ingest_events
-```
+## 🔐 Authentication (Clerk)
 
-### 4. Rails Event Store (RES) Configuration
-Rails Event Store is configured in `config/initializers/clerk.rb` and `config/initializers/rails_event_store.rb`. 
-- **Events**: We use `EventUpvoted` and `EventDownvoted` events.
-- **Metadata**: Each event data payload includes the `user_id` of the voter and the `event_id`.
-- **Viewing Events**: You can view the event stream at `/res` in the development environment.
+Authentication is implemented using Clerk.
 
-### 5. Running the App
-```bash
-rails server
-```
+### Approach
+
+* Clerk hosted authentication pages are used
+* User identity is handled on the frontend
+* User ID is passed to backend during voting
+
+### Note
+
+In a production system, Clerk session tokens would be verified server-side.
+For this assignment, a lightweight approach is used to keep the integration simple and focused.
+
+---
+
+## ⚡ Turbo Integration
+
+Turbo Frames are used to:
+
+* Update vote counts dynamically
+* Avoid full page reloads
+* Improve user experience
+
+---
 
 ## 🧪 Testing
-The test suite covers model validations, authentication restrictions, Event Store publishing, and browser-based system flows.
+
+RSpec is used for testing.
+
+Basic coverage includes:
+
+* Model validations
+* Event creation for voting
+
+---
+
+## ⚙️ Setup Instructions
+
+### Prerequisites
+
+* Ruby 3.4.x
+* Rails 8.x
+* PostgreSQL
+
+---
+
+### Installation
+
 ```bash
-bundle exec rspec
+git clone https://github.com/Kinju011/billetto_app.git
+cd billetto_app
+bundle install
 ```
 
-## 🛠 Features Implemented
-- **API Ingestion**: Automated fetching of events with error handling.
-- **Clerk Auth**: Modal-based sign-in/sign-up and server-side session verification.
-- **Voting Logic**: Asynchronous voting buttons with "one-vote" restriction.
-- **Event Driven**: All votes are stored as immutable events in RES.
+---
+
+### Database Setup
+
+```bash
+bin/rails db:create
+bin/rails db:migrate
+```
+
+---
+
+### Environment Variables
+
+Create a `.env` file:
+
+```env
+BILLETTO_API_KEY=your_key
+BILLETTO_API_SECRET=your_secret
+CLERK_PUBLISHABLE_KEY=your_key
+```
+
+---
+
+### Run the Application
+
+```bash
+bin/rails server
+```
+
+Open:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 📊 Assumptions
+
+* Billetto API returns data based on region and may not always be in English
+* Only essential event fields are stored
+* Voting system does not prevent duplicate votes per user (can be extended)
+
+---
+
+## ⚖️ Trade-offs
+
+* Used hosted Clerk authentication instead of full backend integration for simplicity
+* Vote counts are calculated dynamically instead of using read models (sufficient for current scale)
+* UI is kept minimal to focus on functionality
+
+---
+
+## 📈 Possible Improvements
+
+* Prevent duplicate voting per user
+* Add pagination for events
+* Implement read models for faster vote aggregation
+* Full Clerk backend integration with session validation
+* Better UI/UX styling
+
+---
+
+## 💬 Summary
+
+This project demonstrates:
+
+* Clean integration with external APIs
+* Event-driven architecture in Rails
+* Practical authentication handling
+* Thoughtful separation of concerns
+
+---
+
+## 👤 Author
+
+Kinjal
