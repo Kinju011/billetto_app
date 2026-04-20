@@ -18,7 +18,8 @@ The goal of this project is to demonstrate:
 * Fetch and ingest events from Billetto API
 * Store and display events with relevant details
 * Event-driven voting system (upvote/downvote)
-* Authentication using Clerk (hosted login)
+* **One vote per user enforcement** (Server-side tracking)
+* Authentication using Clerk (**Full Backend Integration**)
 * Turbo-powered UI updates (no full page reload)
 
 ---
@@ -86,14 +87,9 @@ Authentication is implemented using Clerk.
 
 ### Approach
 
-* Clerk hosted authentication pages are used
-* User identity is handled on the frontend
-* User ID is passed to backend during voting
-
-### Note
-
-In a production system, Clerk session tokens would be verified server-side.
-For this assignment, a lightweight approach is used to keep the integration simple and focused.
+* Clerk hosted authentication pages are used for a seamless UI.
+* **Backend Integration**: Implemented server-side session verification via `Clerk::Authenticatable`.
+* **Security**: All voting actions require a valid backend session to ensure user identity.
 
 ---
 
@@ -113,8 +109,9 @@ RSpec is used for testing.
 
 Basic coverage includes:
 
-* Model validations
-* Event creation for voting
+* **Model Validations**: Ensuring data integrity for ingested events.
+* **Request Specs**: Verifying authentication restrictions and Event Store publishing.
+* **System Specs**: Real browser-based testing for the full voting and auth flow.
 
 ---
 
@@ -175,27 +172,23 @@ http://localhost:3000
 
 ## 📊 Assumptions
 
-* Billetto API returns data based on region and may not always be in English
-* Only essential event fields are stored
-* Voting system does not prevent duplicate votes per user (can be extended)
+* Billetto API returns data based on region and may not always be in English.
+* Only essential event fields are stored to maintain a lightweight footprint.
 
 ---
 
 ## ⚖️ Trade-offs
 
-* Used hosted Clerk authentication instead of full backend integration for simplicity
-* Vote counts are calculated dynamically instead of using read models (sufficient for current scale)
-* UI is kept minimal to focus on functionality
+* **Dynamic Calculation**: Vote counts are calculated dynamically from the event stream. For massive scale, this would be moved to a read model (projection), but for this assignment, it ensures data consistency.
+* **UI Focus**: The interface is designed for speed and clarity using Turbo, rather than heavy client-side frameworks.
 
 ---
 
 ## 📈 Possible Improvements
 
-* Prevent duplicate voting per user
-* Add pagination for events
-* Implement read models for faster vote aggregation
-* Full Clerk backend integration with session validation
-* Better UI/UX styling
+* Add pagination for the event listing page.
+* Implement read models for faster vote aggregation if traffic scales significantly.
+* Add comprehensive error page styling.
 
 ---
 
