@@ -152,6 +152,7 @@ Create a `.env` file:
 BILLETTO_API_KEY=your_key
 BILLETTO_API_SECRET=your_secret
 CLERK_PUBLISHABLE_KEY=your_key
+CLERK_SECRET_KEY=your_key
 ```
 
 ---
