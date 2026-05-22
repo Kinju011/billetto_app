@@ -68,6 +68,6 @@ gem "httparty", "~> 0.24.2"
 
 gem "dotenv-rails", "~> 3.2"
 
-gem "rails_event_store", "~> 2.18"
+gem "rails_event_store", "~> 2.19"
 
 gem "clerk-sdk-ruby", require: "clerk"
